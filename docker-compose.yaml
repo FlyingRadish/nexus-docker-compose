@@ -1,0 +1,46 @@
+version: '3.6'
+services:
+  clash:
+    image: 'dreamacro/clash'
+    container_name: 'clash'
+    restart: always
+    hostname: 'clash'
+    ports:
+      - "7890:7890"
+      - "7891:7891"
+      - "16090:9090"
+    volumes:
+      - 'path_to_clash_dir:/root/.config/clash'
+    networks:
+      generic_dev:
+        ipv4_address: 172.50.0.2
+  yacd:
+    image: 'haishanh/yacd'
+    container_name: 'yacd'
+    restart: always
+    hostname: 'yacd'
+    ports:
+      - '15080:80'
+    networks:
+      - generic_dev
+  nexus:
+    image: 'sonatype/nexus3:latest'
+    container_name: 'nexus'
+    restart: always
+    hostname: 'nexus'
+    ports:
+      - '11081:8081'
+      - '11082:11082'
+    volumes:
+      - 'path_to_nexus_dir:/nexus-data'
+    networks:
+      - generic_dev
+networks:
+  generic_dev:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.50.0.0/16
+          ip_range: 172.50.1.0/24
+          gateway: 172.50.0.1
+    name: generic_dev
